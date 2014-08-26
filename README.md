@@ -10,6 +10,7 @@ Current source languages:
 
 Current output formats:
 - HTML
+- Terminal (because why not)
 
 
 Installation

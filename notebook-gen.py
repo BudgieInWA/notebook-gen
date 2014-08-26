@@ -102,22 +102,36 @@ def collect_recipes(src_path):
 
 
 def prepare_feast_terminal(recipes):
-	raise NotImplemented("Sorry, terminal formatting is currently broken. Try with --html")
 
 	if verbose: print "\nWe have", len(recipes), "recipes\n"
 	if verbose: print "---------------------------\n"
 
 	counter = 1
-	for r in recipes:
-		print "%i. %s" % (counter, r.name)
-		counter += 1;
-	print
-	for r in recipes:
-		print "---------------------------\n"
-		print '==', r.name, '==\n'
-		if r.complexity: print r.complexity + '\n'
-		if r.icing:      print r.icing + '\n'
-		print r.bake(TerminalFormatter())
+	for group, rs in recipes.iteritems():
+		print "%i. %s" % (counter, group)
+		counter += 1
+		counter2 = 1
+		for r in rs:
+			print "  %i. %s" % (counter2, r.name)
+			counter2 += 1
+
+	for group, rs in recipes.iteritems():
+		if group:
+			print
+			print
+			print
+			print group
+
+		for r in rs:
+			if not r.complexity: r.complexity = ""
+			print
+			print
+			print r.name,
+			print " "*(80 - len(r.name) - len(r.complexity) - 2),
+			print r.complexity
+			print
+			if r.icing: print r.icing + '\n'
+			print r.bake(TerminalFormatter())
 
 
 def prepare_feast_html(recipes, o):

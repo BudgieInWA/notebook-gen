@@ -124,8 +124,9 @@ def prepare_feast_html(recipes, o):
 	
 	if verbose: print "Writing html..."
 	
-	o.write(
-'''<html>
+	o.write('''
+<!doctype html>
+<html>
 <head>
 	<title>Notebook</title>
 	<style>
@@ -133,12 +134,12 @@ def prepare_feast_html(recipes, o):
 	html { font-family: arial, sans-serif; }
 	h3 { margin-bottom: 0; }
 	.complexity { float: right; font-weight: normal; font-style: italic; }
-	.description { margin-left: 2em; font-style: italic; }
+    .description { margin-left: 1em; font-style: italic; font-family: monospace; white-space: pre }
 
 ''')
 	o.write(HtmlFormatter().get_style_defs('\t\t'))
-	o.write(
-'''	</style>
+	o.write('''
+    </style>
 </head>
 <body>
 
@@ -161,7 +162,7 @@ def prepare_feast_html(recipes, o):
 				o.write('<span class="complexity">'+r.complexity+'</span>\n')
 			o.write('</h3>\n')
 			if r.icing:
-				o.write('<div class="description"><pre>' + r.icing + '</pre></div>')
+				o.write('<p class="description">' + r.icing + '</p>')
 			o.write(r.bake(HtmlFormatter()))
 
 	o.write('</body>\n</html>\n')

@@ -101,37 +101,32 @@ def collect_recipes(src_path):
 	return recipes
 
 
-def prepare_feast_terminal(recipes):
+def prepare_feast_terminal(recipes, o):
 
 	if verbose: print "\nWe have", len(recipes), "recipes\n"
 	if verbose: print "---------------------------\n"
 
 	counter = 1
 	for group, rs in recipes.iteritems():
-		print "%i. %s" % (counter, group)
+		o.write("%i. %s" % (counter, group))
 		counter += 1
 		counter2 = 1
 		for r in rs:
-			print "  %i. %s" % (counter2, r.name)
+			o.write("  %i. %s" % (counter2, r.name))
 			counter2 += 1
 
 	for group, rs in recipes.iteritems():
 		if group:
-			print
-			print
-			print
-			print group
+			o.write("\n\n\ngroup")
 
 		for r in rs:
 			if not r.complexity: r.complexity = ""
+			o.write("\n\n" + r.name +
+					" "*(80 - len(r.name) - len(r.complexity) - 2) +
+					r.complexity)
 			print
-			print
-			print r.name,
-			print " "*(80 - len(r.name) - len(r.complexity) - 2),
-			print r.complexity
-			print
-			if r.icing: print r.icing + '\n'
-			print r.bake(TerminalFormatter())
+			if r.icing: o.write(r.icing + "\n")
+			o.write(r.bake(TerminalFormatter()))
 
 
 def prepare_feast_html(recipes, o):
@@ -148,12 +143,12 @@ def prepare_feast_html(recipes, o):
 	html { font-family: arial, sans-serif; }
 	h3 { margin-bottom: 0; }
 	.complexity { float: right; font-weight: normal; font-style: italic; }
-    .description { margin-left: 1em; font-style: italic; font-family: monospace; white-space: pre }
+	.description { margin-left: 1em; font-style: italic; font-family: monospace; white-space: pre }
 
 ''')
 	o.write(HtmlFormatter().get_style_defs('\t\t'))
 	o.write('''
-    </style>
+	</style>
 </head>
 <body>
 
@@ -188,15 +183,27 @@ if __name__ == '__main__':
 	ap = argparse.ArgumentParser("An HTML notebook generator.")
 	ap.add_argument('source_dir')
 	ap.add_argument('-o', '--outfile', type=argparse.FileType('w'), default=sys.stdout,
-			help="filename for the generated output (if ommited, output is set to stdout)")
-	ap.add_argument('--html', action='store_true', default=False,
-			help="force the output to be html formatted (default output format for stdout is terminal coloured text)")
+			help="filename for the generated output (default stdout)")
+	ap.add_argument('-f', '--format',
+			help="the format of the output ('html' or 'term')(default chosen according to outfile extension")
 	ap.add_argument('-v', '--verbose', action='store_true', default=False,
 			help="output progress information (ignored if no out file is specified)")
 
 	args = ap.parse_args()
 	verbose = args.verbose
-	if args.outfile == sys.stdout and not args.html:
-		prepare_feast_terminal(collect_recipes(args.source_dir))
+	fmt = args.format
+	if not fmt:
+		if args.outfile == sys.stdout:
+			fmt = 'term'
+		else:
+			_, fmt = os.path.splitext(args.outfile.name)
+
+	recipes = collect_recipes(args.source_dir)
+
+	if args.format == 'html':
+		prepare_feast_html(recipes, args.outfile)
+	elif args.format == 'term':
+		prepare_feast_terminal(recipes, args.outfile)
 	else:
-		prepare_feast_html(collect_recipes(args.source_dir), args.outfile)
+		print "unknown format", fmt
+		ap.print_help()

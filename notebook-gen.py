@@ -180,7 +180,7 @@ def prepare_feast_html(recipes, o):
 
 
 if __name__ == '__main__':
-	ap = argparse.ArgumentParser("An HTML notebook generator.")
+	ap = argparse.ArgumentParser(description="Generate an HTML notebook from source code files.")
 	ap.add_argument('source_dir')
 	ap.add_argument('-o', '--outfile', type=argparse.FileType('w'), default=sys.stdout,
 			help="filename for the generated output (default stdout)")
@@ -196,14 +196,15 @@ if __name__ == '__main__':
 		if args.outfile == sys.stdout:
 			fmt = 'term'
 		else:
-			_, fmt = os.path.splitext(args.outfile.name)
+			_, ext = os.path.splitext(args.outfile.name)
+			fmt = ext[1:] # remove the leading dot
 
 	recipes = collect_recipes(args.source_dir)
 
-	if args.format == 'html':
+	if fmt == 'html':
 		prepare_feast_html(recipes, args.outfile)
-	elif args.format == 'term':
+	elif fmt == 'term':
 		prepare_feast_terminal(recipes, args.outfile)
 	else:
-		print "unknown format", fmt
-		ap.print_help()
+		print "Error: unknown format:", fmt
+		ap.print_usage()

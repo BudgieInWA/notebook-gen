@@ -55,7 +55,8 @@ Optionally, you can give your algorithms a description by creating a file with
 the same name but an extension of "txt", as with `misc.txt` in the example
 above. The first line of this text document will be used as the algorithm' name
 and the second line will be used as the algorithm's time complexity. A blank
-line should separate these two lines from the algorithm description.
+line should separate these two lines from the algorithm description. The description
+should be [markdown](http://daringfireball.net/projects/markdown/syntax).
 
 To include only a part of a source file in the notebook, surround the relevant
 part with the delimiter lines:
@@ -67,4 +68,4 @@ part with the delimiter lines:
 Contributing
 ============
 
-Please send pull requests to https://github.com/BudgieInWA/notebook-gen
+Please send pull requests or file bug or request features at [https://github.com/BudgieInWA/notebook-gen](https://github.com/BudgieInWA/notebook-gen).

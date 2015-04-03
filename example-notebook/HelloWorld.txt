@@ -4,7 +4,7 @@ O(1) time
 This algorithm always returns "Hello World!". It is included as an example of
 how to format your files for inclusion in the notebook. The first line of this
 document is the name of the algorithm. The second line is the time complexity.
-The text description is seperated by a blank line.
+The text description is seperated by a blank line and is parsed as **markdown**.
 
 Note that the java file is valid and can be compiles and tested. It is good
 practice to compile and test your notebook code.

@@ -2,6 +2,7 @@ import os
 import sys
 
 import argparse
+import markdown
 
 import pygments
 from pygments.lexers import CppLexer, JavaLexer
@@ -145,7 +146,7 @@ def prepare_feast_html(recipes, o):
 	*/
 	h3 { margin-bottom: 0; }
 	.complexity { float: right; font-weight: normal; font-style: italic; }
-	.description { color: gray; font-style: italic; font-family: monospace; white-space: pre }
+	.description { color: gray; font-style: italic; }
 
 ''')
 	o.write(HtmlFormatter().get_style_defs('\t'))
@@ -176,7 +177,7 @@ def prepare_feast_html(recipes, o):
 				o.write('<span class="complexity">'+r.complexity+'</span>\n')
 			o.write('</h3>\n')
 			if r.icing:
-				o.write('<p class="description">' + r.icing + '</p>')
+				o.write('<div class="description">' + markdown.markdown(r.icing) + '</div>')
 			o.write(r.bake(HtmlFormatter()))
 
 	o.write('</body>\n</html>\n')

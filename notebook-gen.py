@@ -37,23 +37,11 @@ class Recipe:
 		
 		try:
 			with open(filename, 'r') as f:
-				# look for the first delimiter
-				del_found = False
-				for line in f:
-					if line.startswith(start_delimiter):
-						del_found = True
-						break
-
-				# use the whole file if not delimiter was found
-				if not del_found:
-					if verbose: print "\t\tdelimiter not found: using whole file"
-					f.seek(0)
-					return f.read()
-
 				# while we haven't hit the end, keep the lines
 				lines = []
 				for line in f:
-					if line.startswith(end_delimiter): break
+					if line.startswith(start_delimiter): lines = []
+					elif line.startswith(end_delimiter): break
 					else: lines.append(line)
 				if verbose: print "\t\t", len(lines), "lines"
 				return ''.join(lines).strip()
@@ -98,6 +86,10 @@ def collect_recipes(src_path):
 			
 			if not section in recipes: recipes[section] = []
 			recipes[section].append(Recipe(root, name, ext))
+
+	for section in recipes:
+		recipes[section].sort()
+
 	return recipes
 
 

@@ -88,7 +88,7 @@ def collect_recipes(src_path):
 			recipes[section].append(Recipe(root, name, ext))
 
 	for section in recipes:
-		recipes[section].sort()
+		recipes[section].sort(key = lambda x: x.name)
 
 	return recipes
 
@@ -99,25 +99,28 @@ def prepare_feast_terminal(recipes, o):
 	if verbose: print "---------------------------\n"
 
 	counter = 1
-	for group, rs in recipes.iteritems():
-		o.write("%i. %s" % (counter, group))
+	keys = sorted(recipes.iterkeys())
+	for group in keys:
+		rs = recipes[group]
+		o.write("%i. %s\n" % (counter, group))
 		counter += 1
 		counter2 = 1
 		for r in rs:
-			o.write("  %i. %s" % (counter2, r.name))
+			o.write("  %i. %s\n" % (counter2, r.name))
 			counter2 += 1
 
-	for group, rs in recipes.iteritems():
+	for group in keys:
+		rs = recipes[group]
 		if group:
-			o.write("\n\n\ngroup")
+			o.write("\n\n\n" + group)
 
 		for r in rs:
 			if not r.complexity: r.complexity = ""
 			o.write("\n\n" + r.name +
 					" "*(80 - len(r.name) - len(r.complexity) - 2) +
 					r.complexity)
-			print
-			if r.icing: o.write(r.icing + "\n")
+			o.write("\n\n")
+			if r.icing: o.write(r.icing + "\n\n")
 			o.write(r.bake(TerminalFormatter()))
 
 
@@ -133,12 +136,19 @@ def prepare_feast_html(recipes, o):
 	<style>
 
 	html { font-family: arial, sans-serif; }
+	/*
+	body {
+		-moz-column-width: 80ch;
+		-webkit-column-width: 80ch;
+		font-family: monospace;
+	}
+	*/
 	h3 { margin-bottom: 0; }
 	.complexity { float: right; font-weight: normal; font-style: italic; }
-	.description { margin-left: 1em; font-style: italic; font-family: monospace; white-space: pre }
+	.description { color: gray; font-style: italic; font-family: monospace; white-space: pre }
 
 ''')
-	o.write(HtmlFormatter().get_style_defs('\t\t'))
+	o.write(HtmlFormatter().get_style_defs('\t'))
 	o.write('''
 	</style>
 </head>
@@ -149,13 +159,16 @@ def prepare_feast_html(recipes, o):
 ''')
 	o.write('<ol id="toc">\n')
 
-	for group, rs in recipes.iteritems():
+	keys = sorted(recipes.iterkeys())
+	for group in keys:
+		rs = recipes[group]
 		o.write('\t<li>'+group+'\n\t\t<ol>')
 		for r in rs: o.write('\t\t\t<li><a href="#'+r.id+'">' + r.name + '</a></li>\n')
 		o.write('\t\t</ol>\n\t</li>\n')
 	o.write('</ol>')
 
-	for group, rs in recipes.iteritems():
+	for group in keys:
+		rs = recipes[group]
 		o.write('<h2>'+group+'</h2>')
 		for r in rs:
 			o.write('<h3 id="'+r.id+'">'+r.name)

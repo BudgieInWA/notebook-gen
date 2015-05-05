@@ -202,14 +202,14 @@ def render_to_html(recipes, o):
 
 
 if __name__ == '__main__':
-	ap = argparse.ArgumentParser(description="Generate an HTML notebook from source code files.")
+	ap = argparse.ArgumentParser(description="Generate an HTML notebook from source code files. v1.0.0-beta")
 	ap.add_argument('source_dir')
 	ap.add_argument('-o', '--outfile', type=argparse.FileType('w'), default=sys.stdout,
 			help="filename for the generated output (default stdout)")
 	ap.add_argument('-f', '--format',
-			help="the format of the output ('html' or 'term')(default chosen according to outfile extension")
+			help="force the format of the output ('html' or 'term')")
 	ap.add_argument('-v', '--verbose', action='store_true', default=False,
-			help="output progress information (ignored if no out file is specified)")
+			help="output progress information")
 
 	args = ap.parse_args()
 	verbose = args.verbose

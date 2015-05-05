@@ -83,6 +83,12 @@ def collect_recipes(src_path):
 	recipes = {}
 	for root, dirs, files in os.walk(src_path):
 		log("In", root)
+
+		# Don't visit "hidden" directories.
+		for d in reversed(dirs):
+			if d.startswith("."):
+				dirs.remove(d)
+
 		section = os.path.basename(root)
 		for f in files:
 			bits = f.rsplit(".", 1);

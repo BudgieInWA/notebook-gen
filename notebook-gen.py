@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import os
 import sys
 
@@ -19,6 +21,9 @@ lexers = {
 class MissingDough(Exception):
 	pass
 
+verbose = False
+def log(*args):
+	if verbose: print(*args, file=sys.stderr)
 
 class Recipe:
 	"""An entry in the notebook."""
@@ -34,7 +39,7 @@ class Recipe:
 	def get_dough(self, filename):
 		"""Loads the algorithm source from the given file."""
 
-		if verbose: print "\tGathering source from", filename
+		log("\tGathering source from", filename);
 		
 		try:
 			with open(filename, 'r') as f:
@@ -44,11 +49,11 @@ class Recipe:
 					if line.startswith(start_delimiter): lines = []
 					elif line.startswith(end_delimiter): break
 					else: lines.append(line)
-				if verbose: print "\t\t", len(lines), "lines"
+				log("\t\t", len(lines), "lines")
 				return ''.join(lines).strip()
 		
 		except IOError as e:
-			print "\t\tskipping:", e
+			print("\t\tskipping:", e)
 			return None
 	
 	def get_icing(self, filename):
@@ -56,13 +61,13 @@ class Recipe:
 		opened = False
 		try:
 			with open(filename) as f:
-				if verbose: print "\t\tGetting description from", filename
+				log("\t\tGetting description from", filename)
 				opened = True
 				self.name = f.readline().strip()
 				self.complexity = f.readline().strip()
 				return f.read().strip()
 		except IOError as e:
-			if opened: print "\t\tCouldn't get icing:", e
+			if opened: print("\t\tCouldn't get icing:", e)
 
 	def bake(self, method):
 		"""Renders the code using pygments."""
@@ -74,10 +79,10 @@ class Recipe:
 def collect_recipes(src_path):
 	"""Walks a dir doing it for each code file."""
 
-	if verbose: print "Collecting recipes from", src_path + "..."
+	log("Collecting recipes from", src_path + "...")
 	recipes = {}
 	for root, dirs, files in os.walk(src_path):
-		if (verbose): print "In", root
+		log("In", root)
 		section = os.path.basename(root)
 		for f in files:
 			bits = f.rsplit(".", 1);
@@ -96,8 +101,8 @@ def collect_recipes(src_path):
 
 def prepare_feast_terminal(recipes, o):
 
-	if verbose: print "\nWe have", len(recipes), "recipes\n"
-	if verbose: print "---------------------------\n"
+	log("\nWe have", len(recipes), "recipes\n")
+	log("---------------------------\n")
 
 	counter = 1
 	keys = sorted(recipes.iterkeys())
@@ -127,7 +132,7 @@ def prepare_feast_terminal(recipes, o):
 
 def prepare_feast_html(recipes, o):
 	
-	if verbose: print "Writing html..."
+	log("Writing html...")
 	
 	o.write('''
 <!doctype html>
@@ -182,7 +187,7 @@ def prepare_feast_html(recipes, o):
 
 	o.write('</body>\n</html>\n')
 	
-	if verbose: print "  written!"
+	log("  written!")
 
 
 if __name__ == '__main__':
@@ -212,5 +217,5 @@ if __name__ == '__main__':
 	elif fmt == 'term':
 		prepare_feast_terminal(recipes, args.outfile)
 	else:
-		print "Error: unknown format:", fmt
+		print("Error: unknown format:", fmt)
 		ap.print_usage()

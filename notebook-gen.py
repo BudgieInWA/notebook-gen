@@ -185,7 +185,7 @@ def render_to_html(recipes, o):
 	o.write('</ol>')
 
 	for group in keys:
-		o.write('<h2>'+group+'</h2>')
+		#o.write('<h2>'+group+'</h2>')
 		for r in recipes[group].values():
 			o.write('<h3 id="'+r.id+'">'+r.name)
 			if r.complexity:

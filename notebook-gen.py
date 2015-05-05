@@ -28,16 +28,16 @@ def log(*args):
 class Recipe:
 	"""An entry in the notebook."""
 
-	def __init__(self, location, name, flavour):
-		self.id      = name + "." + flavour
-		self.name    = name
-		self.flavour = flavour # language
-		self.complexity = ''
-		self.dough   = self.get_dough(os.path.join(location, self.name +'.'+ self.flavour))
-		self.icing   = self.get_icing(os.path.join(location, self.name +'.txt'))
+	def __init__(self, name):
+		self.id          = name
+		self.name        = name
+		self.complexity  = ''
+		self.codeblocks  = [] # A list of (ext, src) pairs.
+		self.description = '' # A markdown source description.
 		
-	def get_dough(self, filename):
-		"""Loads the algorithm source from the given file."""
+	def add_code(self, filename, ext):
+		"""Loads the algorithm source from the given file and adds it to the
+		recipe."""
 
 		log("\tGathering source from", filename);
 		
@@ -50,34 +50,37 @@ class Recipe:
 					elif line.startswith(end_delimiter): break
 					else: lines.append(line)
 				log("\t\t", len(lines), "lines")
-				return ''.join(lines).strip()
+				self.codeblocks.append((ext, ''.join(lines).strip()))
 		
 		except IOError as e:
 			print("\t\tskipping:", e)
 			return None
 	
-	def get_icing(self, filename):
-		"""Loads the name and description of an algorithm."""
-		opened = False
+	def add_description(self, filename):
+		"""Loads the name and description of an algorithm and adds it to the
+		recipe."""
+
+		log("\t\tGetting description from", filename)
+
 		try:
 			with open(filename) as f:
-				log("\t\tGetting description from", filename)
-				opened = True
 				self.name = f.readline().strip()
 				self.complexity = f.readline().strip()
-				return f.read().strip()
+				self.description = f.read().strip()
 		except IOError as e:
-			if opened: print("\t\tCouldn't get icing:", e)
+			print("\t\tCouldn't load description:", e)
 
-	def bake(self, method):
+	def render_codeblocks(self, formatter):
 		"""Renders the code using pygments."""
-		if (not self.dough): return None;
 
-		return pygments.highlight(self.dough.replace("\t","    "), lexers[self.flavour], method)
+		return [pygments.highlight(src.replace("\t","    "), lexers[ext], formatter)
+				for (ext, src) in self.codeblocks]
 
 
 def collect_recipes(src_path):
-	"""Walks a dir doing it for each code file."""
+	"""Walks a dir collecting turning files into recipes."""
+
+	filetypes = lexers.keys() + ["txt"]
 
 	log("Collecting recipes from", src_path + "...")
 	recipes = {}
@@ -91,21 +94,25 @@ def collect_recipes(src_path):
 
 		section = os.path.basename(root)
 		for f in files:
-			bits = f.rsplit(".", 1);
-			if len(bits) != 2: continue;
-			name, ext = bits;
-			if not ext in lexers: continue
+			name, ext = os.path.splitext(f)
+			ext = ext[1:]
+			if not ext in filetypes: continue
 			
-			if not section in recipes: recipes[section] = []
-			recipes[section].append(Recipe(root, name, ext))
+			if not section in recipes: recipes[section] = {}
+			if not name in recipes[section]:
+				recipes[section][name] = Recipe(name)
 
-	for section in recipes:
-		recipes[section].sort(key = lambda x: x.name)
+			r = recipes[section][name]
+			fn = os.path.join(root, f);
+			if ext in lexers:
+				r.add_code(fn, ext)
+			elif ext == "txt":
+				r.add_description(fn)
 
 	return recipes
 
 
-def prepare_feast_terminal(recipes, o):
+def render_to_terminal(recipes, o):
 
 	log("\nWe have", len(recipes), "recipes\n")
 	log("---------------------------\n")
@@ -113,30 +120,28 @@ def prepare_feast_terminal(recipes, o):
 	counter = 1
 	keys = sorted(recipes.iterkeys())
 	for group in keys:
-		rs = recipes[group]
 		o.write("%i. %s\n" % (counter, group))
 		counter += 1
 		counter2 = 1
-		for r in rs:
+		for r in recipes[group].values():
 			o.write("  %i. %s\n" % (counter2, r.name))
 			counter2 += 1
 
 	for group in keys:
-		rs = recipes[group]
 		if group:
 			o.write("\n\n\n" + group)
 
-		for r in rs:
+		for r in recipes[group].values():
 			if not r.complexity: r.complexity = ""
 			o.write("\n\n" + r.name +
 					" "*(80 - len(r.name) - len(r.complexity) - 2) +
 					r.complexity)
 			o.write("\n\n")
-			if r.icing: o.write(r.icing + "\n\n")
-			o.write(r.bake(TerminalFormatter()))
+			if r.description: o.write(r.description + "\n\n")
+			o.write("\n".join(r.render_codeblocks(TerminalFormatter())))
 
 
-def prepare_feast_html(recipes, o):
+def render_to_html(recipes, o):
 	
 	log("Writing html...")
 	
@@ -173,23 +178,23 @@ def prepare_feast_html(recipes, o):
 
 	keys = sorted(recipes.iterkeys())
 	for group in keys:
-		rs = recipes[group]
 		o.write('\t<li>'+group+'\n\t\t<ol>')
-		for r in rs: o.write('\t\t\t<li><a href="#'+r.id+'">' + r.name + '</a></li>\n')
+		for r in recipes[group].values():
+			o.write('\t\t\t<li><a href="#'+r.id+'">' + r.name + '</a></li>\n')
 		o.write('\t\t</ol>\n\t</li>\n')
 	o.write('</ol>')
 
 	for group in keys:
-		rs = recipes[group]
 		o.write('<h2>'+group+'</h2>')
-		for r in rs:
+		for r in recipes[group].values():
 			o.write('<h3 id="'+r.id+'">'+r.name)
 			if r.complexity:
 				o.write('<span class="complexity">'+r.complexity+'</span>\n')
 			o.write('</h3>\n')
-			if r.icing:
-				o.write('<div class="description">' + markdown.markdown(r.icing) + '</div>')
-			o.write(r.bake(HtmlFormatter()))
+			if r.description:
+				o.write('<div class="description">' + 
+						markdown.markdown(r.description) + '</div>')
+			o.write("\n".join(r.render_codeblocks(HtmlFormatter())))
 
 	o.write('</body>\n</html>\n')
 	
@@ -219,9 +224,9 @@ if __name__ == '__main__':
 	recipes = collect_recipes(args.source_dir)
 
 	if fmt == 'html':
-		prepare_feast_html(recipes, args.outfile)
+		render_to_html(recipes, args.outfile)
 	elif fmt == 'term':
-		prepare_feast_terminal(recipes, args.outfile)
+		render_to_terminal(recipes, args.outfile)
 	else:
 		print("Error: unknown format:", fmt)
 		ap.print_usage()

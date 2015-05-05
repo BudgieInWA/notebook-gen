@@ -93,6 +93,8 @@ def collect_recipes(src_path):
 				dirs.remove(d)
 
 		section = os.path.basename(root)
+		#TODO make section the bit relative to src_path and make sure the top
+		#     level section sorts first
 		for f in files:
 			if f.startswith("."): continue
 			name, ext = os.path.splitext(f)

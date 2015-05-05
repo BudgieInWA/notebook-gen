@@ -91,9 +91,7 @@ def collect_recipes(src_path):
 		# Don't visit "hidden" directories.
 		dirs[:] = (d for d in dirs if not d.startswith("."))
 
-		section = os.path.basename(root)
-		#TODO make section the bit relative to src_path and make sure the top
-		#     level section sorts first
+		section = os.path.relpath(root, src_path)
 		for f in files:
 			if f.startswith("."): continue
 			name, ext = os.path.splitext(f)

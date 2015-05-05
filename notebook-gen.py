@@ -94,6 +94,7 @@ def collect_recipes(src_path):
 
 		section = os.path.basename(root)
 		for f in files:
+			if f.startswith("."): continue
 			name, ext = os.path.splitext(f)
 			ext = ext[1:]
 			if not ext in filetypes: continue

@@ -89,9 +89,7 @@ def collect_recipes(src_path):
 		log("In", root)
 
 		# Don't visit "hidden" directories.
-		for d in reversed(dirs):
-			if d.startswith("."):
-				dirs.remove(d)
+		dirs[:] = (d for d in dirs if not d.startswith("."))
 
 		section = os.path.basename(root)
 		#TODO make section the bit relative to src_path and make sure the top

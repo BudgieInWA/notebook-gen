@@ -180,16 +180,18 @@ def render_to_html(recipes, o, css_file):
 	o.write('</ol>')
 
 	for group in keys:
-		#o.write('<h2>'+group+'</h2>')
+		o.write('<h2>'+group+'</h2>')
 		for n, r in sorted(recipes[group].iteritems()):
 			o.write('<h3 id="'+r.id+'">'+r.name)
 			if r.complexity:
 				o.write('<span class="complexity">'+r.complexity+'</span>\n')
 			o.write('</h3>\n')
+			o.write('<article>')
 			if r.description:
 				o.write('<div class="description">' + 
 						markdown.markdown(r.description) + '</div>')
 			o.write("\n".join(r.render_codeblocks(HtmlFormatter())))
+			o.write('</article>')
 
 	o.write('</body>\n</html>\n')
 	

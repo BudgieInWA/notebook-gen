@@ -141,7 +141,7 @@ def render_to_terminal(recipes, o):
 			o.write("\n".join(r.render_codeblocks(TerminalFormatter())))
 
 
-def render_to_html(recipes, o):
+def render_to_html(recipes, o, css_file):
 	
 	log("Writing html...")
 	
@@ -151,8 +151,10 @@ def render_to_html(recipes, o):
 <head>
 	<title>Notebook</title>
 	<style>
-
-	html { font-family: arial, sans-serif; }
+''')
+	o.write(HtmlFormatter().get_style_defs('\t'))
+	o.write(css_file.read())
+	o.write('''
 	/*
 	body {
 		-moz-column-width: 80ch;
@@ -160,13 +162,6 @@ def render_to_html(recipes, o):
 		font-family: monospace;
 	}
 	*/
-	h3 { margin-bottom: 0; }
-	.complexity { float: right; font-weight: normal; font-style: italic; }
-	.description { color: gray; font-style: italic; }
-
-''')
-	o.write(HtmlFormatter().get_style_defs('\t'))
-	o.write('''
 	</style>
 </head>
 <body>
@@ -202,10 +197,15 @@ def render_to_html(recipes, o):
 
 
 if __name__ == '__main__':
+	script_dir = os.path.dirname(os.path.realpath(__file__))
+
 	ap = argparse.ArgumentParser(description="Generate an HTML notebook from source code files. v1.0.0-beta")
 	ap.add_argument('source_dir')
 	ap.add_argument('-o', '--outfile', type=argparse.FileType('w'), default=sys.stdout,
 			help="filename for the generated output (default stdout)")
+	ap.add_argument('--css', type=argparse.FileType('r'),
+			default=os.path.join(script_dir, "default.css"),
+			help="use a different stylesheet")
 	ap.add_argument('-f', '--format',
 			help="force the format of the output ('html' or 'term')")
 	ap.add_argument('-v', '--verbose', action='store_true', default=False,
@@ -224,7 +224,7 @@ if __name__ == '__main__':
 	recipes = collect_recipes(args.source_dir)
 
 	if fmt == 'html':
-		render_to_html(recipes, args.outfile)
+		render_to_html(recipes, args.outfile, args.css)
 	elif fmt == 'term':
 		render_to_terminal(recipes, args.outfile)
 	else:

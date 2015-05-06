@@ -141,7 +141,7 @@ def render_to_terminal(recipes, o):
 			o.write("\n".join(r.render_codeblocks(TerminalFormatter())))
 
 
-def render_to_html(recipes, o, css_file):
+def render_to_html(recipes, o, args):
 	
 	log("Writing html...")
 	
@@ -153,15 +153,16 @@ def render_to_html(recipes, o, css_file):
 	<style>
 ''')
 	o.write(HtmlFormatter().get_style_defs('\t'))
-	o.write(css_file.read())
+	o.write(args.css.read())
+	if (args.textwidth):
+		o.write("""
+		body {{
+			-moz-column-width: {0}ch;
+			-webkit-column-width: {0}ch;
+			font-family: monospace;
+		}}
+		""".format(args.textwidth))
 	o.write('''
-	/*
-	body {
-		-moz-column-width: 80ch;
-		-webkit-column-width: 80ch;
-		font-family: monospace;
-	}
-	*/
 	</style>
 </head>
 <body>
@@ -205,13 +206,15 @@ if __name__ == '__main__':
 	ap.add_argument('source_dir')
 	ap.add_argument('-o', '--outfile', type=argparse.FileType('w'), default=sys.stdout,
 			help="filename for the generated output (default stdout)")
-	ap.add_argument('--css', type=argparse.FileType('r'),
-			default=os.path.join(script_dir, "default.css"),
-			help="use a different stylesheet")
 	ap.add_argument('-f', '--format',
 			help="force the format of the output ('html' or 'term')")
 	ap.add_argument('-v', '--verbose', action='store_true', default=False,
 			help="output progress information")
+	ap.add_argument('--css', type=argparse.FileType('r'),
+			default=os.path.join(script_dir, "default.css"),
+			help="use a different stylesheet")
+	ap.add_argument('--textwidth', type=int,
+			help="the width of your code in characters, used for columns")
 
 	args = ap.parse_args()
 	verbose = args.verbose
@@ -226,7 +229,7 @@ if __name__ == '__main__':
 	recipes = collect_recipes(args.source_dir)
 
 	if fmt == 'html':
-		render_to_html(recipes, args.outfile, args.css)
+		render_to_html(recipes, args.outfile, args)
 	elif fmt == 'term':
 		render_to_terminal(recipes, args.outfile)
 	else:

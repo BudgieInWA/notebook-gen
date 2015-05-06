@@ -1,0 +1,40 @@
+html { font-family: arial, sans-serif; }
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: arial, sans-serif;
+	margin-bottom: 0.1em;
+}
+pre, p, ol, ul { margin-top: 0.2em; }
+p, ol, ul { font-family: arial, sans-serif; }
+
+#toc {
+	list-style: none;
+	padding-left: 0;
+	font-weight: bold;
+}
+#toc ol {
+	list-style: none;
+	padding-left: 1.5em;
+	font-weight: normal;
+	margin-bottom: 0.8em;
+}
+
+h2, h3 {
+	margin-top: 0.5em;
+	padding-top: 0.5em;
+	border-top: 1px solid black;
+}
+h3 { border-top-color: grey }
+
+article h1, article h2, article h3, article h4, article h5 {
+	padding-top: 0;
+	margin-top: 0.8em;
+}
+article h1 { font-size: 110%; }
+article h2 { font-size: 105%; border-top: none; }
+article h3 { font-size: 100%; border-top: none; }
+article h4 { font-size: 100%; color: gray; }
+article h4 { font-size: 100%; color: gray; font-style: italic; }
+
+.complexity { float: right; font-weight: normal; font-style: italic; }
+.description { color: #444; }

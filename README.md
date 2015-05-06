@@ -1,8 +1,10 @@
 notebook-gen
 ============
 
-This python script will convert a directory full of example implementations and
-generate a formatted (and code highlighted) notebook.
+version 1.0.0-beta
+
+This python script will convert a directory full of source code and notes 
+into a formatted (and code highlighted) notebook.
 
 Current source languages:
 - Java
@@ -28,6 +30,13 @@ Test the installation:
 
 You should see the 'Hello World' notebook rendered to your terminal.
 
+Make the python file executable and put it on your path if you want to run it
+directly:
+
+	chmod +x notebook-gen.py
+	ln --symbolic $PWD/notebook-gen.py /usr/local/bin/notebook-gen
+	notebook-gen -h
+
 
 Usage
 =====
@@ -36,14 +45,19 @@ Get help for using the python script by running:
 
 	python notebook-gen.py -h
 
-To get started you must put all of your code in a single directory. You can
-categorise your algorithms (one level deep) by placing them inside directories.
+To get started you must put all of your code and notes under a single directory.
+Files with the same base name will be collated into one entry. Entries can be
+grouped by placing them in subdirectories. Entries and groups will be presented
+in lexographical order. Files and directories starting with a `.` will not be
+processed.
+
 For example:
 
 	notebook/
 		Geometry/
 			nope.cpp
 			OtherGeom.java
+		-notes.txt
 		misc.cpp
 		misc.txt
 
@@ -51,18 +65,24 @@ A notebook can then be rendered in HTML by running the following command:
 
 	python notebook-gen.py --outfile notebook.html notebook/
 
-Optionally, you can give your algorithms a description by creating a file with
-the same name but an extension of "txt", as with `misc.txt` in the example
-above. The first line of this text document will be used as the algorithm' name
-and the second line will be used as the algorithm's time complexity. A blank
-line should separate these two lines from the algorithm description. The description
-should be [markdown](http://daringfireball.net/projects/markdown/syntax).
+Source Files
+------------
 
-To include only a part of a source file in the notebook, surround the relevant
-part with the delimiter lines:
+Source files for the supported languages will be added as entries. To include
+only a part of a source file in the notebook, surround the relevant part with
+the delimiter lines:
 
 	/* START SOLUTION */
 	/* END SOLUTION */
+
+Text Files
+----------
+
+`.txt` files are handled specially.  The first line is used as the algorithm's
+name and the second line is used as a short note (usually the algorithm's time
+complexity). A blank line separates these from the rest of the file which is the
+description that will be interpreted as
+[markdown](http://daringfireball.net/projects/markdown/syntax).
 
 
 Contributing

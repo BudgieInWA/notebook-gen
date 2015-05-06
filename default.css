@@ -29,14 +29,14 @@ h2, h3 {
 	padding-top: 0.5em;
 	border-top: 1px solid black;
 }
-h3 { border-top-color: grey }
+h3 { border-top-color: grey; font-size: 130%; }
 
 .description h1, .description h2, .description h3, .description h4, .description h5 {
 	padding-top: 0;
 	margin-top: 0.8em;
 }
-.description h1 { font-size: 110%; }
-.description h2 { font-size: 105%; border-top: none; }
+.description h1 { font-size: 115%; }
+.description h2 { font-size: 108%; border-top: none; }
 .description h3 { font-size: 100%; border-top: none; }
 .description h4 { font-size: 100%; color: gray; }
 .description h4 { font-size: 100%; color: gray; font-style: italic; }

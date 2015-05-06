@@ -123,7 +123,7 @@ def render_to_terminal(recipes, o):
 		o.write("%i. %s\n" % (counter, group))
 		counter += 1
 		counter2 = 1
-		for r in recipes[group].values():
+		for n, r in sorted(recipes[group].iteritems()):
 			o.write("  %i. %s\n" % (counter2, r.name))
 			counter2 += 1
 
@@ -131,7 +131,7 @@ def render_to_terminal(recipes, o):
 		if group:
 			o.write("\n\n\n" + group)
 
-		for r in recipes[group].values():
+		for n, r in sorted(recipes[group].iteritems()):
 			if not r.complexity: r.complexity = ""
 			o.write("\n\n" + r.name +
 					" "*(80 - len(r.name) - len(r.complexity) - 2) +
@@ -179,14 +179,14 @@ def render_to_html(recipes, o):
 	keys = sorted(recipes.iterkeys())
 	for group in keys:
 		o.write('\t<li>'+group+'\n\t\t<ol>')
-		for r in recipes[group].values():
+		for n, r in sorted(recipes[group].iteritems()):
 			o.write('\t\t\t<li><a href="#'+r.id+'">' + r.name + '</a></li>\n')
 		o.write('\t\t</ol>\n\t</li>\n')
 	o.write('</ol>')
 
 	for group in keys:
 		#o.write('<h2>'+group+'</h2>')
-		for r in recipes[group].values():
+		for n, r in sorted(recipes[group].iteritems()):
 			o.write('<h3 id="'+r.id+'">'+r.name)
 			if r.complexity:
 				o.write('<span class="complexity">'+r.complexity+'</span>\n')

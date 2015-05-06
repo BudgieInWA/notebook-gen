@@ -153,7 +153,9 @@ def render_to_html(recipes, o, args):
 	<style>
 ''')
 	o.write(HtmlFormatter().get_style_defs('\t'))
-	o.write(args.css.read())
+	o.write(open(os.path.join(os.path.dirname(os.path.realpath(__file__)),
+		'default.css')).read())
+	if (args.css): o.write(args.css.read())
 	if (args.textwidth):
 		o.write("""
 		body {{
@@ -205,7 +207,6 @@ def render_to_html(recipes, o, args):
 
 
 if __name__ == '__main__':
-	script_dir = os.path.dirname(os.path.realpath(__file__))
 
 	ap = argparse.ArgumentParser(description="Generate an HTML notebook from source code files. v1.0.0-beta")
 	ap.add_argument('source_dir')
@@ -216,8 +217,7 @@ if __name__ == '__main__':
 	ap.add_argument('-v', '--verbose', action='store_true', default=False,
 			help="output progress information")
 	ap.add_argument('--css', type=argparse.FileType('r'),
-			default=os.path.join(script_dir, "default.css"),
-			help="use a different stylesheet")
+			help="specify a custom css file to append")
 	ap.add_argument('--textwidth', type=int,
 			help="the width of your code in characters, used for columns")
 

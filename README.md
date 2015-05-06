@@ -95,12 +95,15 @@ into columns.
 Firefox
 -------
 
-Use the scale option to make sure you get the desired number of columns.
+Use Firefox's header and footer options to remove garbage and add page numbers
+etc. Use the scale option found in print preview to make sure you get the
+desired number of columns.
 
 To remove the extra margin between the print margin and the page content
 navigate to `about:config`, search for "margin" and set
-`print.print_margin_right` and `print.print_margin_left` to 0. These settings
-might not show up until you have used the UI to change the margins.
+`print.print_margin_right` and `print.print_margin_left` to 0. I have found 0.2
+to be a good value for `top` and `bottom`. These settings might not show up in the
+list until you have used the UI to change the margins.
 
 Chrome
 ------

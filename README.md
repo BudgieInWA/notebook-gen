@@ -88,9 +88,9 @@ description that will be interpreted as
 Tips For Printing
 =================
 
-(In the near future, TODO) use the `--textwidth` argument to specify the column
-width as a number of code characters. When your page is wide enough the content
-will automatically reflow into columns.
+Use the `--textwidth` argument to specify the column width as a number of code
+characters. When your page is wide enough the content will automatically reflow
+into columns.
 
 Firefox
 -------

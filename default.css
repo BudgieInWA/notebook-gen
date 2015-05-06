@@ -1,5 +1,10 @@
 html { font-family: arial, sans-serif; }
 
+@page {
+	orphans: 4;
+	widows: 4;
+}
+
 h1, h2, h3, h4, h5, h6 {
 	font-family: arial, sans-serif;
 	margin-bottom: 0.1em;

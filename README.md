@@ -85,6 +85,28 @@ description that will be interpreted as
 [markdown](http://daringfireball.net/projects/markdown/syntax).
 
 
+Tips For Printing
+=================
+
+(In the near future, TODO) use the `--textwidth` argument to specify the column
+width as a number of code characters. When your page is wide enough the content
+will automatically reflow into columns.
+
+Firefox
+-------
+
+Use the scale option to make sure you get the desired number of columns.
+
+To remove the extra margin between the print margin and the page content
+navigate to `about:config`, search for "margin" and set
+`print.print_margin_right` and `print.print_margin_left` to 0. These settings
+might not show up until you have used the UI to change the margins.
+
+Chrome
+------
+
+Help!
+
 Contributing
 ============
 

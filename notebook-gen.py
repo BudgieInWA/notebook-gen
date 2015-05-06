@@ -168,31 +168,36 @@ def render_to_html(recipes, o, args):
 <body>
 
 <h1>Notebook</h1>
+<Section>
 <h2>Table of Contents</h2>
 ''')
+	o.write('<nav>\n')
 	o.write('<ol id="toc">\n')
-
 	keys = sorted(recipes.iterkeys())
 	for group in keys:
-		o.write('\t<li>'+group+'\n\t\t<ol>')
+		o.write('\t<li>'+group+'\n\t\t<ol>\n')
 		for n, r in sorted(recipes[group].iteritems()):
 			o.write('\t\t\t<li><a href="#'+r.id+'">' + r.name + '</a></li>\n')
 		o.write('\t\t</ol>\n\t</li>\n')
-	o.write('</ol>')
+	o.write('</ol>\n')
+	o.write('</nav>\n')
+	o.write('</section>\n')
 
 	for group in keys:
-		o.write('<h2>'+group+'</h2>')
+		o.write('<section>\n')
+		o.write('<h2>'+group+'</h2>\n')
 		for n, r in sorted(recipes[group].iteritems()):
+			o.write('<article>\n')
 			o.write('<h3 id="'+r.id+'">'+r.name)
 			if r.complexity:
 				o.write('<span class="complexity">'+r.complexity+'</span>\n')
 			o.write('</h3>\n')
-			o.write('<article>')
 			if r.description:
-				o.write('<div class="description">' + 
-						markdown.markdown(r.description) + '</div>')
+				o.write('<section class="description">' + 
+						markdown.markdown(r.description) + '</section>\n')
 			o.write("\n".join(r.render_codeblocks(HtmlFormatter())))
-			o.write('</article>')
+			o.write('</article>\n')
+		o.write('</section>')
 
 	o.write('</body>\n</html>\n')
 	

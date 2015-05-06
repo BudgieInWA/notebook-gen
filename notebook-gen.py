@@ -142,6 +142,7 @@ def render_to_terminal(recipes, o):
 
 
 def render_to_html(recipes, o, args):
+	script_root = os.path.dirname(os.path.realpath(__file__))
 	
 	log("Writing html...")
 	
@@ -153,8 +154,8 @@ def render_to_html(recipes, o, args):
 	<style>
 ''')
 	o.write(HtmlFormatter().get_style_defs('\t'))
-	o.write(open(os.path.join(os.path.dirname(os.path.realpath(__file__)),
-		'default.css')).read())
+	o.write(open(os.path.join(script_root, 'normalise.css')).read())
+	o.write(open(os.path.join(script_root, 'default.css')).read())
 	if (args.css): o.write(args.css.read())
 	if (args.textwidth):
 		o.write("""

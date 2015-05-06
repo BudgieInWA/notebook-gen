@@ -1,4 +1,4 @@
-html { font-family: arial, sans-serif; }
+body { font-family: monospace; font-size: 10pt; }
 
 @page {
 	orphans: 4;
@@ -22,6 +22,10 @@ p, ol, ul { font-family: arial, sans-serif; }
 	padding-left: 1.5em;
 	font-weight: normal;
 	margin-bottom: 0.8em;
+}
+#toc li {
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
 }
 
 h2, h3 {

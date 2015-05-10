@@ -9,7 +9,9 @@ h1, h2, h3, h4, h5, h6 {
 	font-family: arial, sans-serif;
 	margin-bottom: 0.1em;
 }
-pre, p, ol, ul { margin-top: 0.2em; }
+pre:first-child, p:first-child, ol, ul {
+	margin-top: 0.2em;
+}
 p, ol, ul { font-family: arial, sans-serif; }
 
 #toc {
@@ -47,3 +49,7 @@ h3 { border-top-color: grey; font-size: 130%; }
 
 .complexity { float: right; font-weight: normal; font-style: italic; }
 .description { color: #444; }
+
+.description p code {
+	white-space: nowrap;
+}

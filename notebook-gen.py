@@ -8,19 +8,20 @@ import argparse
 import markdown
 
 import pygments
-from pygments.lexers import CppLexer, JavaLexer
+from pygments.lexers import CppLexer, JavaLexer, CLexer, PythonLexer
 from pygments.formatters import HtmlFormatter, TerminalFormatter, NullFormatter
 
 start_delimiter = "/* START SOLUTION */";
 end_delimiter   = "/* END SOLUTION */";
 
 lexers = {
-	'cpp':   CppLexer(),
-	'java': JavaLexer()
+	'cpp':  CppLexer(),
+	'hpp':  CppLexer(),
+	'c':    CLexer(),
+	'h':    CLexer(),
+	'py':   PythonLexer(),
+	'java': JavaLexer(),
 }
-
-class MissingDough(Exception):
-	pass
 
 verbose = False
 def log(*args):
